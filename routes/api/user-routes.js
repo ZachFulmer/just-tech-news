@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { User, Post, Vote } = require('../../models');
+const { User, Post, Vote, Comment} = require('../../models');
 
 // GET /API/USERS
 router.get('/', (req, res) => {
@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
         .catch( err =>
             {
                 console.log(err);
-                res.statys(500).json(err);
+                res.status(500).json(err);
             });
 });
 
@@ -19,6 +19,14 @@ router.get('/:id', (req,res) => {
     User.findOne({
         attributes: { exclude: ['password']},
         include: [
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'created_at'],
+                include: {
+                  model: Post,
+                  attributes: ['title']
+                }
+            },
             {
               model: Post,
               attributes: ['id', 'title', 'post_url', 'created_at']
